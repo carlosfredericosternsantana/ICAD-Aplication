@@ -156,3 +156,4 @@ C:\Users\carlo\Downloads\MyApp\MyAppBackend\obj\Debug\net10.0\refint\MyAppBacken
 C:\Users\carlo\Downloads\MyApp\MyAppBackend\obj\Debug\net10.0\MyAppBackend.pdb
 C:\Users\carlo\Downloads\MyApp\MyAppBackend\obj\Debug\net10.0\MyAppBackend.genruntimeconfig.cache
 C:\Users\carlo\Downloads\MyApp\MyAppBackend\obj\Debug\net10.0\ref\MyAppBackend.dll
+C:\Users\carlo\Downloads\MyApp\MyAppBackend\obj\Debug\net10.0\MyAppBackend.sourcelink.json

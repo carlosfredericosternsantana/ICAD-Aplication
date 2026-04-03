@@ -1,0 +1,40 @@
+@page "/tasks"
+@inject TaskItemService TaskService
+
+<h3>Lista de Tasks</h3>
+
+@if (tasks == null)
+{
+    <p>Carregando...</p>
+}
+else if (!tasks.Any())
+{
+    <p>Nenhuma task encontrada.</p>
+}
+else
+{
+    <ul>
+        @foreach (var task in tasks)
+        {
+            <li>
+                <strong>@task.Title</strong> - @task.Difficulty - Responsável: @task.UserName
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<TaskItemDto> tasks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            tasks = await TaskService.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao carregar tasks: {ex.Message}");
+        }
+    }
+}
