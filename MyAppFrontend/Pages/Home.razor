@@ -1,7 +1,46 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Components.Forms
+@inject NavigationManager Navigation
+@inject MyAppFrontend.Services.AuthService AuthService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Login</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="card p-4 shadow" style="width: 350px;">
+        <h3 class="text-center mb-4">Login</h3>
 
-Welcome to your new app.
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
+
+        <div class="mb-3">
+            <label class="form-label">Usuário</label>
+            <input class="form-control" @bind="username" placeholder="Digite seu usuário" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Senha</label>
+            <input class="form-control" type="password" @bind="password" placeholder="Digite sua senha" />
+        </div>
+        <button class="btn btn-primary w-100" @onclick="HandleLogin">Entrar</button>
+    </div>
+</div>
+
+@code {
+    private string username = "";
+    private string password = "";
+    private string errorMessage = "";
+
+    private void HandleLogin()
+    {
+        if (username == "admin" && password == "Admin@ICAD!")
+        {
+            AuthService.Login(username);
+            Navigation.NavigateTo("/tasks");
+        }
+        else
+        {
+            errorMessage = "Usuário ou senha inválidos!";
+        }
+    }
+}

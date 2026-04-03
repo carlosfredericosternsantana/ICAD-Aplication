@@ -1,33 +1,53 @@
 @page "/tasks"
 @inject TaskItemService TaskService
+@inject MyAppFrontend.Services.AuthService AuthService
+@inject NavigationManager Navigation
 
-<h3>Lista de Tasks</h3>
-
-@if (tasks == null)
+@if (notAuthorized)
 {
-    <p>Carregando...</p>
-}
-else if (!tasks.Any())
-{
-    <p>Nenhuma task encontrada.</p>
+    <div class="alert alert-danger" role="alert">
+        Você precisa estar logado para acessar esta página! Redirecionando...
+    </div>
 }
 else
 {
-    <ul>
-        @foreach (var task in tasks)
-        {
-            <li>
-                <strong>@task.Title</strong> - @task.Difficulty - Responsável: @task.UserName
-            </li>
-        }
-    </ul>
+    <h3>Lista de Tasks</h3>
+
+    @if (tasks == null)
+    {
+        <p>Carregando...</p>
+    }
+    else if (!tasks.Any())
+    {
+        <p>Nenhuma task encontrada.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var task in tasks)
+            {
+                <li>
+                    <strong>@task.Title</strong> - @task.Difficulty - Responsável: @task.UserName
+                </li>
+            }
+        </ul>
+    }
 }
 
 @code {
     private List<TaskItemDto> tasks;
+    private bool notAuthorized = false;
 
     protected override async Task OnInitializedAsync()
     {
+        if (!AuthService.IsLoggedIn)
+        {
+            notAuthorized = true;
+            await Task.Delay(2000); // espera 2 segundos para o usuário ler o alert
+            Navigation.NavigateTo("/");
+            return;
+        }
+
         try
         {
             tasks = await TaskService.GetAllAsync();

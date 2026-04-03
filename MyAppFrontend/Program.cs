@@ -7,13 +7,15 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Adiciona o serviço de tasks
+
 builder.Services.AddScoped<TaskItemService>();
 
-// HttpClient para chamar a API
+
+builder.Services.AddSingleton<AuthService>();
+
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri("http://localhost:5134/") // <-- seu backend
+    BaseAddress = new Uri("http://localhost:5134/")
 });
 
 await builder.Build().RunAsync();
