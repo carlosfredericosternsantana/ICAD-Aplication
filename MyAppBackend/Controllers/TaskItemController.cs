@@ -57,4 +57,23 @@ public class TaskItemController : ControllerBase
         if (!result) return NotFound();
         return Ok();
     }
+    [HttpGet("user/{userId}")]
+public async Task<IActionResult> GetByUser(int userId)
+{
+    var tasks = await _service.GetAllAsync();
+    var result = tasks
+        .Where(t => t.UserId == userId)
+        .Select(t => new TaskItemDto
+        {
+            Id = t.Id,
+            Title = t.Title,
+            Description = t.Description,
+            DueDate = t.DueDate,
+            Difficulty = t.Difficulty,
+            IsCompleted = t.IsCompleted,
+            UserId = t.UserId,
+            UserName = t.User?.Username
+        });
+    return Ok(result);
+}
 }

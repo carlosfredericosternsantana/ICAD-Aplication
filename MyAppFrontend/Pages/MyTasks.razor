@@ -1,0 +1,109 @@
+@page "/mytasks"
+@inject TaskItemService TaskService
+@inject MyAppFrontend.Services.AuthService AuthService
+@inject NavigationManager Navigation
+
+@if (notAuthorized)
+{
+    <div class="alert alert-danger" role="alert">
+        Você precisa estar logado para acessar suas Tarefas! Redirecionando...
+    </div>
+}
+else
+{
+    <h3 class="mb-4">Minhas Tarefas</h3>
+
+    @if (tasks == null)
+    {
+        <p>Carregando...</p>
+    }
+    else if (!tasks.Any())
+    {
+        <p>Nenhuma tarefa encontrada.</p>
+    }
+    else
+    {
+        <div class="accordion align-items-center" id="myTasksAccordion">
+            @foreach (var task in tasks)
+            {
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" class="me-2 ms-2" checked="@task.IsCompleted" />
+                            <button class="accordion-button collapsed" type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#mytask-@task.Id">
+                                @task.Title
+                                <span class="badge bg-secondary ms-2">@task.Difficulty</span>
+                            </button>
+                        </div>
+                    </h2>
+                    <div id="mytask-@task.Id" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <p><strong>Descrição:</strong> @task.Description</p>
+                            <p><strong>Data de Entrega:</strong> @task.DueDate.ToShortDateString()</p>
+                            <p><strong>Responsável:</strong> @task.UserName</p>
+                            <p><strong>Concluída:</strong> @(task.IsCompleted ? "Sim" : "Não")</p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-warning btn-sm" @onclick="() => EditTask(task.Id)">
+                                    Editar
+                                </button>
+                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteTask(task.Id)">
+                                    Deletar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+
+@code {
+    private List<TaskItemDto> tasks;
+    private bool notAuthorized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthService.IsLoggedIn)
+        {
+            notAuthorized = true;
+            await Task.Delay(2000);
+            Navigation.NavigateTo("/");
+            return;
+        }
+
+        await LoadTasks();
+    }
+
+    private async Task LoadTasks()
+    {
+        try
+        {
+            tasks = await TaskService.GetByUserAsync(AuthService.LoggedInUserId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao carregar tasks: {ex.Message}");
+        }
+    }
+
+    private void EditTask(int id)
+    {
+        Navigation.NavigateTo($"/edittask/{id}");
+    }
+
+    private async Task DeleteTask(int id)
+    {
+        try
+        {
+            await TaskService.DeleteAsync(id);
+            await LoadTasks();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao deletar task: {ex.Message}");
+        }
+    }
+}

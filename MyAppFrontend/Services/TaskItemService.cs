@@ -27,4 +27,8 @@ public class TaskItemService
     {
         await _http.DeleteAsync($"api/taskitem/{id}");
     }
+    public async Task<List<TaskItemDto>> GetByUserAsync(int userId)
+    {
+        return await _http.GetFromJsonAsync<List<TaskItemDto>>($"api/taskitem/user/{userId}");
+    }
 }

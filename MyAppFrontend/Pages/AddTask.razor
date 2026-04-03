@@ -6,46 +6,47 @@
 @if (notAuthorized)
 {
     <div class="alert alert-danger" role="alert">
-        Você precisa estar logado para criar tarefas , redirecionando ...
+        Você precisa estar logado para criar tarefas, redirecionando...
     </div>
 }
 else
 {
-    <h3 class="mb-4">Adicionar Nova Tarefa</h3>
+    <div class="d-flex flex-column align-items-center">
+        <h3 class="mb-4">Adicionar Nova Tarefa</h3>
 
-    @if (!string.IsNullOrEmpty(successMessage))
-    {
-        <div class="alert alert-success">@successMessage</div>
-    }
+        @if (!string.IsNullOrEmpty(successMessage))
+        {
+            <div class="alert alert-success w-100" style="max-width: 600px;">@successMessage</div>
+        }
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger w-100" style="max-width: 600px;">@errorMessage</div>
+        }
 
-    @if (!string.IsNullOrEmpty(errorMessage))
-    {
-        <div class="alert alert-danger">@errorMessage</div>
-    }
-
-    <div class="card p-4 shadow" style="max-width: 600px;">
-        <div class="mb-3">
-            <label class="form-label">Título</label>
-            <input class="form-control" @bind="task.Title" placeholder="Digite o título" />
+        <div class="card p-4 shadow" style="max-width: 600px; width: 100%;">
+            <div class="mb-3">
+                <label class="form-label">Título</label>
+                <input class="form-control" @bind="task.Title" placeholder="Digite o título" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Descrição</label>
+                <textarea class="form-control" @bind="task.Description" placeholder="Digite a descrição"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Data de Entrega</label>
+                <input class="form-control" type="date" @bind="task.DueDate" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Dificuldade</label>
+                <select class="form-select" @bind="task.Difficulty">
+                    <option value="">Selecione...</option>
+                    <option value="Fácil">Fácil</option>
+                    <option value="Médio">Médio</option>
+                    <option value="Difícil">Difícil</option>
+                </select>
+            </div>
+            <button class="btn btn-primary w-100" @onclick="HandleSubmit">Adicionar Tarefa</button>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Descrição</label>
-            <textarea class="form-control" @bind="task.Description" placeholder="Digite a descrição"></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Data de Entrega</label>
-            <input class="form-control" type="date" @bind="task.DueDate" />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Dificuldade</label>
-            <select class="form-select" @bind="task.Difficulty">
-                <option value="">Selecione...</option>
-                <option value="Fácil">Fácil</option>
-                <option value="Médio">Médio</option>
-                <option value="Difícil">Difícil</option>
-            </select>
-        </div>
-        <button class="btn btn-primary w-100" @onclick="HandleSubmit">Adicionar Tarefa</button>
     </div>
 }
 
@@ -75,16 +76,12 @@ else
                 errorMessage = "O título é obrigatório!";
                 return;
             }
-
-            task.UserId = 1;
+            task.UserId = AuthService.LoggedInUserId;
             task.IsCompleted = false;
-
             await TaskService.CreateAsync(task);
-
             successMessage = "Tarefa adicionada com sucesso!";
             errorMessage = "";
             task = new TaskItemDto();
-
             await Task.Delay(2000);
             Navigation.NavigateTo("/tasks");
         }
