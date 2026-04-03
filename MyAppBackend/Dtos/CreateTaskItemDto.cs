@@ -7,4 +7,5 @@ public class CreateTaskItemDto
     public DateTime DueDate { get; set; }
     public string Difficulty { get; set; }
     public int UserId { get; set; }
+    public bool IsCompleted { get; set; }
 }

@@ -1,0 +1,96 @@
+@page "/edittask/{Id:int}"
+@inject TaskItemService TaskService
+@inject MyAppFrontend.Services.AuthService AuthService
+@inject NavigationManager Navigation
+
+@if (notAuthorized)
+{
+    <div class="alert alert-danger" role="alert">
+        Você precisa estar logado para editar tarefas! Redirecionando...
+    </div>
+}
+else if (task == null)
+{
+    <p>Carregando...</p>
+}
+else
+{
+    <h3 class="mb-4">Editar Tarefa</h3>
+    <div class="container mt-3">
+        <div class="mb-3">
+            <label class="form-label">Título</label>
+            <input class="form-control" @bind="task.Title" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Descrição</label>
+            <textarea class="form-control" @bind="task.Description"></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Data de Entrega</label>
+            <input type="date" class="form-control" @bind="task.DueDate" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Dificuldade</label>
+            <select class="form-select" @bind="task.Difficulty">
+                <option value="Fácil">Fácil</option>
+                <option value="Médio">Médio</option>
+                <option value="Difícil">Difícil</option>
+            </select>
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" @bind="task.IsCompleted" />
+            <label class="form-check-label">Concluída</label>
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorMsg))
+        {
+            <div class="alert alert-danger">@errorMsg</div>
+        }
+
+        <button class="btn btn-primary" @onclick="HandleUpdate">Salvar</button>
+        <a href="/tasks" class="btn btn-secondary ms-2">Cancelar</a>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private TaskItemDto? task;
+    private bool notAuthorized = false;
+    private string? errorMsg;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthService.IsLoggedIn)
+        {
+            notAuthorized = true;
+            await Task.Delay(2000);
+            Navigation.NavigateTo("/");
+            return;
+        }
+
+        try
+        {
+            task = await TaskService.GetByIdAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao carregar tarefa: {ex.Message}");
+            errorMsg = "Erro ao carregar tarefa.";
+        }
+    }
+
+    private async Task HandleUpdate()
+    {
+        try
+        {
+            await TaskService.UpdateAsync(Id, task!);
+            Navigation.NavigateTo("/tasks");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao atualizar tarefa: {ex.Message}");
+            errorMsg = "Erro ao atualizar tarefa. Tente novamente.";
+        }
+    }
+}
