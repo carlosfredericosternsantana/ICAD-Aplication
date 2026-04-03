@@ -9,8 +9,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 
 builder.Services.AddScoped<TaskItemService>();
-
-
+builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<AuthService>();
 
 builder.Services.AddScoped(sp => new HttpClient

@@ -6,7 +6,7 @@
 @if (notAuthorized)
 {
     <div class="alert alert-danger" role="alert">
-        Você precisa estar logado para acessar esta página! Redirecionando...
+        Você precisa estar logado para acessar suas Tarefas! Redirecionando...
     </div>
 }
 else
@@ -23,7 +23,7 @@ else
     }
     else
     {
-        <div class="accordion" id="tasksAccordion">
+        <div class="accordion align-items-center" id="tasksAccordion">
             @foreach (var task in tasks)
             {
                 <div class="accordion-item">

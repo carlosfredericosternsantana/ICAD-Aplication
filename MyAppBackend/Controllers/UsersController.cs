@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyAppBackend.Data;
 using MyAppBackend.Models;
+using MyAppBackend.DTOs;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -60,4 +61,17 @@ public class UsersController : ControllerBase
 
         return NoContent();
     }
+    // POST: api/users/login
+// POST: api/users/login
+[HttpPost("login")]
+public IActionResult Login([FromBody] LoginDto loginDto)
+{
+    var user = _context.Users
+        .FirstOrDefault(u => u.Username == loginDto.Username && u.Password == loginDto.Password);
+
+    if (user == null)
+        return Unauthorized();
+
+    return Ok(new { user.Id, user.Username });
+}
 }

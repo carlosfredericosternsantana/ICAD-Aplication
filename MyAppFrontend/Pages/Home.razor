@@ -1,13 +1,20 @@
 ﻿@page "/"
+@layout LoginLayout
 @using Microsoft.AspNetCore.Components.Forms
 @inject NavigationManager Navigation
 @inject MyAppFrontend.Services.AuthService AuthService
+@inject MyAppFrontend.Services.UserService UserService
 
 <PageTitle>Login</PageTitle>
 
 <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
     <div class="card p-4 shadow" style="width: 350px;">
         <h3 class="text-center mb-4">Login</h3>
+
+        @if (loggedOut)
+        {
+            <div class="alert alert-success">Você deslogou com sucesso!</div>
+        }
 
         @if (!string.IsNullOrEmpty(errorMessage))
         {
@@ -30,12 +37,29 @@
     private string username = "";
     private string password = "";
     private string errorMessage = "";
+    private bool loggedOut = false;
 
-    private void HandleLogin()
+    protected override async Task OnInitializedAsync()
     {
-        if (username == "admin" && password == "Admin@ICAD!")
+        var uri = new Uri(Navigation.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        loggedOut = query["loggedout"] == "true";
+
+        if (loggedOut)
         {
-            AuthService.Login(username);
+            await Task.Delay(2000);
+            loggedOut = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleLogin()
+    {
+        var user = await UserService.LoginAsync(username, password);
+
+        if (user != null)
+        {
+            AuthService.Login(user.Username, user.Id);
             Navigation.NavigateTo("/tasks");
         }
         else
