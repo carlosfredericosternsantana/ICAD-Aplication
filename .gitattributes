@@ -1,23 +1,14 @@
-# =========================
 # Backend (.NET)
-# =========================
 MyAppBackend/bin/ linguist-vendored
 MyAppBackend/obj/ linguist-vendored
 
-# =========================
-# Frontend (Razor)
-# =========================
+# Frontend (Razor static files)
 MyAppFrontend/wwwroot/ linguist-vendored
 
-# =========================
-# Arquivos gerados/minificados
-# =========================
+# Ignorar JS/CSS gerados
 *.min.js linguist-vendored
 *.min.css linguist-vendored
 *.map linguist-vendored
 
-# =========================
-# Arquivos de dependência/config
-# =========================
-package-lock.json linguist-vendored
-yarn.lock linguist-vendored
+*.js linguist-vendored
+*.css linguist-vendored
