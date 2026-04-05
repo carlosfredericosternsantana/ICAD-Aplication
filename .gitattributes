@@ -1,14 +1,4 @@
-# Backend (.NET)
-MyAppBackend/bin/ linguist-vendored
-MyAppBackend/obj/ linguist-vendored
-
-# Frontend (Razor static files)
-MyAppFrontend/wwwroot/ linguist-vendored
-
-# Ignorar JS/CSS gerados
-*.min.js linguist-vendored
-*.min.css linguist-vendored
-*.map linguist-vendored
-
 *.js linguist-vendored
 *.css linguist-vendored
+*.min.js linguist-vendored
+*.min.css linguist-vendored
